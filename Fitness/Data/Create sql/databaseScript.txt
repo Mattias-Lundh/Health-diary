@@ -1,0 +1,150 @@
+﻿CREATE DATABASE [health]
+GO
+USE [health]
+GO
+CREATE USER [developer] WITHOUT LOGIN WITH DEFAULT_SCHEMA=[dbo]
+GO
+ALTER ROLE [db_owner] ADD MEMBER [developer]
+GO
+CREATE TABLE [dbo].[campaign](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](255) NULL,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[consumption](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](255) NULL,
+	[Calories] [int] NULL,
+	[Protein] [int] NULL,
+	[Carbs] [int] NULL,
+	[Amount] [int] NULL,
+	[Unit] [int] NULL,
+	[Day] [datetime] NOT NULL,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[consumptionTemplate](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TemplateName] [varchar](255) NULL,
+	[Name] [varchar](255) NULL,
+	[Calories] [int] NULL,
+	[Protein] [int] NULL,
+	[Carbs] [int] NULL,
+	[Amount] [int] NULL,
+	[Unit] [int] NULL,
+PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[meal](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](255) NULL,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[mealConsumptionTemplate](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[MealId] [int] NULL,
+	[ConsumptionTemplateId] [int] NULL,
+	FOREIGN KEY (MealId) REFERENCES	[dbo].[meal] ON DELETE CASCADE,
+	FOREIGN KEY (ConsumptionTemplateId) REFERENCES [dbo].[consumptionTemplate] ON DELETE CASCADE,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[excersise](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](255) NULL,
+	[Duration] [int] NULL,
+	[Weight] [int] NULL,
+	[Reps] [int] NULL,
+	[Sets] [int] NULL,
+	[Day] [dateTime] NULL,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[excersiseTemplate](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TemplateName] [varchar](255) NULL,
+	[Name] [varchar](255) NULL,
+	[Duration] [int] NULL,
+	[Weight] [int] NULL,
+	[Reps] [int] NULL,
+	[Sets] [int] NULL,
+	[Muscle] [int] Null,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[muscle](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[enumCode] [int] NULL,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[excersiseMuscle](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ExcersiseId] [int] NULL,
+	[MuscleId] [int] NULL,
+	FOREIGN KEY (ExcersiseId) REFERENCES	[dbo].[excersise] ON DELETE CASCADE,
+	FOREIGN KEY (MuscleId) REFERENCES [dbo].[muscle] ON DELETE CASCADE,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[excersiseTemplateMuscle](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ExcersiseTemplateId] [int] NULL,
+	[MuscleId] [int] NULL,
+	FOREIGN KEY (ExcersiseTemplateId) REFERENCES	[dbo].[excersiseTemplate] ON DELETE CASCADE,
+	FOREIGN KEY (MuscleId) REFERENCES [dbo].[muscle] ON DELETE CASCADE,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[campaignConsumption](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ConsumptionId] [int] NULL,
+	[CampaignId] [int] NULL,
+	FOREIGN KEY (ConsumptionId) REFERENCES	[dbo].[consumption] ON DELETE CASCADE,
+	FOREIGN KEY (CampaignId) REFERENCES [dbo].[campaign] ON DELETE CASCADE,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[campaignConsumptionTemplate](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ConsumptionTemplateId] [int] NULL,
+	[CampaignId] [int] NULL,
+	FOREIGN KEY (ConsumptionTemplateId) REFERENCES	[dbo].[consumptionTemplate] ON DELETE CASCADE,
+	FOREIGN KEY (CampaignId) REFERENCES [dbo].[campaign] ON DELETE CASCADE,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[campaignExcersise](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ExcersiseId] [int] NULL,
+	[CampaignId] [int] NULL,
+	FOREIGN KEY (ExcersiseId) REFERENCES [dbo].[excersise] ON DELETE CASCADE,
+	FOREIGN KEY (CampaignId) REFERENCES [dbo].[campaign] ON DELETE CASCADE,
+	PRIMARY KEY ([Id]))
+GO
+CREATE TABLE [dbo].[campaignExcersiseTemplate](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ExcersiseTemplateId] [int] NULL,
+	[CampaignId] [int] NULL,
+	FOREIGN KEY (ExcersiseTemplateId) REFERENCES [dbo].[excersiseTemplate] ON DELETE CASCADE,
+	FOREIGN KEY (CampaignId) REFERENCES [dbo].[campaign] ON DELETE CASCADE,
+	PRIMARY KEY ([Id]))
+GO
+INSERT INTO campaign (Name) VALUES ('juneCampaign')
+GO
+INSERT INTO consumption (Name, Calories, Protein, Carbs, Amount, Unit, Day) VALUES ('broccoli', 10,20,30,40,1,'2022-06-05')
+GO
+INSERT INTO consumptionTemplate (TemplateName, Name, Calories, Protein, Carbs, Amount, Unit) VALUES ('normal broccoli', 'broccoli', 10,20,30,40,1)
+GO
+INSERT INTO excersise (Name, Weight, Reps, Sets, Day) VALUES ('beanch press', 75, 8, 3, '2022-06-05')
+GO
+INSERT INTO excersiseTemplate (TemplateName, Name, Weight, Reps, Sets) VALUES ('normal bench','bench press', 75, 8, 3)
+GO
+INSERT INTO meal (Name) VALUES ('pasta carbonara')
+GO
+INSERT INTO muscle (enumCode) VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15)
+GO
+INSERT INTO excersiseMuscle (ExcersiseId, MuscleId) VALUES (1, 1)
+GO
+INSERT INTO excersiseTemplateMuscle (ExcersiseTemplateId, MuscleId) VALUES (1, 1)
+GO
+INSERT INTO mealConsumptionTemplate (MealId, ConsumptionTemplateId) VALUES (1, 1)
+GO
+INSERT INTO campaignConsumption (ConsumptionId, CampaignId) VALUES (1, 1)
+GO
+INSERT INTO campaignConsumptionTemplate (ConsumptionTemplateId, CampaignId) VALUES (1, 1)
+GO
+INSERT INTO campaignExcersise (ExcersiseId, CampaignId) VALUES (1, 1)
+GO
+INSERT INTO campaignExcersiseTemplate (ExcersiseTemplateId, CampaignId) VALUES (1, 1)
+GO
