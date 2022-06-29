@@ -6,9 +6,23 @@ CREATE USER [developer] WITHOUT LOGIN WITH DEFAULT_SCHEMA=[dbo]
 GO
 ALTER ROLE [db_owner] ADD MEMBER [developer]
 GO
+CREATE TABLE [dbo].[system](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[JwtSecret] [varchar](255) NOT NULL,
+	PRIMARY KEY ([Id]))
+
+GO
+CREATE TABLE [dbo].[appUser](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Email] [varchar](255) NOT NULL UNIQUE,
+	[Password] [varchar](255) NOT NULL,
+	[Salt] [varchar](255) NOT NULL,
+	PRIMARY KEY ([Id]))
+GO
 CREATE TABLE [dbo].[campaign](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [varchar](255) NULL,
+	[AppUser] [int] NOT Null,
 	PRIMARY KEY ([Id]))
 GO
 CREATE TABLE [dbo].[consumption](
@@ -120,7 +134,11 @@ CREATE TABLE [dbo].[campaignExcersiseTemplate](
 	FOREIGN KEY (CampaignId) REFERENCES [dbo].[campaign] ON DELETE CASCADE,
 	PRIMARY KEY ([Id]))
 GO
-INSERT INTO campaign (Name) VALUES ('juneCampaign')
+INSERT INTO system (JwtSecret) VALUES ('aGBNf2K9hP2GB0DWhDjv69OmGH+9wgTsO685Tdn1+aU=')
+GO
+INSERT INTO appUser (Email, Password, Salt) VALUES ('user@gmail.com', 'aoncfsiujgytsthj', 'rocksalt')
+GO
+INSERT INTO campaign (Name, AppUser) VALUES ('juneCampaign',1)
 GO
 INSERT INTO consumption (Name, Calories, Protein, Carbs, Amount, Unit, Day) VALUES ('broccoli', 10,20,30,40,1,'2022-06-05')
 GO

@@ -76,7 +76,7 @@ namespace Fitness.Data.access
                 con.Open();
                 using (var trx = con.BeginTransaction())
                 {
-                    var id = con.Execute(queryString, parameters, trx);
+                    var id = con.QuerySingle<int>(queryString, parameters, trx);
                     trx.Commit();
                     return id;
                 }

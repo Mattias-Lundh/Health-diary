@@ -9,6 +9,7 @@ namespace Fitness.Data
     {
         public int Id{ get; set; }
         public string Name { get; set; }
+        public AppUser AppUser { get; set; }
         public List<Consumption> Consumptions { get; set; }
         public List<ConsumptionTemplate> ConsumptionTemplates{ get; set; }
         public List<Meal>Meals { get; set; }

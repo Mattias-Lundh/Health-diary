@@ -1,4 +1,5 @@
 using Fitness.Data.access;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Fitness.Injection;
+using Fitness.Middleware;
+using Fitness.Data;
+using Dapper;
 
 namespace Fitness
 {
@@ -27,9 +32,9 @@ namespace Fitness
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-            services.AddSingleton(new Database("Server=DESKTOP-3CSF1CU;Database=health;Trusted_Connection=True;"));
+            services.AddHealthDairyDependencies();
+            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fitness", Version = "v1" });
@@ -45,10 +50,18 @@ namespace Fitness
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fitness v1"));
             }
+            //app.UseMiddleware<CorsMiddleware>();
+            
+            app.UseMiddleware<JWTCheckMiddleware>();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
 
             app.UseAuthorization();
 
