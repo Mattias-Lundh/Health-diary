@@ -47,7 +47,7 @@ namespace Fitness.Controller
         {
             _data.ConsumptionTemplate.UpdateConsumptionTemplate(consumptionTemplate.ToConsumptionTemplate());
 
-            return "Success";
+            return "success";
         }
 
         [HttpDelete]
@@ -55,7 +55,7 @@ namespace Fitness.Controller
         public string Delete(int Id)
         {
             _data.ConsumptionTemplate.DeleteConsumptionTemplate(Id);
-            return "Success";
+            return "success";
         }       
 
     }

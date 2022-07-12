@@ -33,7 +33,25 @@ namespace Fitness.Data.access
                         return et; 
                     }, 
                     parameters, 
-                    splitOn: "Id").ToList();
+                    splitOn: "Id").GroupBy(e => e.Id)
+                    .Select(group =>
+                    {
+                        var excersiseTemplate = new ExcersiseTemplate
+                        {
+                            Id = group.First().Id,
+                            TemplateName = group.First().TemplateName,
+                            Name = group.First().Name,
+                            Duration = group.First().Duration,
+                            Weight = group.First().Weight,
+                            Reps = group.First().Reps,
+                            Sets = group.First().Sets,
+                            Campaign = group.First().Campaign
+                        };
+
+                        excersiseTemplate.Muscles.AddRange(group.Select(et => et.Muscles.First()));
+                        return excersiseTemplate;
+                    })
+                    .ToList();
             }
         }
 
@@ -70,7 +88,7 @@ namespace Fitness.Data.access
                 Reps = excersiseTemplate.Reps,
                 Sets = excersiseTemplate.Sets,
                 CampaignId = excersiseTemplate.Campaign
-            };
+            };            
 
             var musclesSql = excersiseTemplate.Muscles.Select(m => $"SELECT @MuscleId = Id FROM muscle M WHERE M.enumCode = {(int)m} INSERT INTO excersiseTemplateMuscle (ExcersiseTemplateId, MuscleId) VALUES (@ExcersiseTemplateId, @MuscleId); ");
             var queryString = $"DECLARE @MuscleId int; DECLARE @ExcersiseTemplateId int; INSERT INTO excersiseTemplate (TemplateName, Name, Duration, Weight, Reps, Sets) OUTPUT Inserted.ID VALUES (@TemplateName, @Name, @Duration, @Weight, @Reps, @Sets); SELECT @ExcersiseTemplateId = SCOPE_IDENTITY(); {string.Concat(musclesSql)} INSERT INTO campaignExcersiseTemplate (CampaignId, ExcersiseTemplateId) VALUES (@CampaignId, @ExcersiseTemplateId);";

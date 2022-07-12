@@ -17,9 +17,10 @@ namespace Fitness.Controller
     public class CampaignController : ControllerBase
     {
         private Database _data;
+
         public CampaignController(Database data)
         {
-            _data = data;
+            _data = data;            
         }
 
         [HttpGet]
@@ -43,7 +44,10 @@ namespace Fitness.Controller
         [Route("")]
         public string Update(CampaignContract campaign)
         {
-            _data.Campaign.UpdateCampaign(campaign.ToCampaign());
+            var c = campaign.ToCampaign();
+            c.AppUser.Id = Context.UserId;
+
+            _data.Campaign.UpdateCampaign(c);
             return "success";
         }
 

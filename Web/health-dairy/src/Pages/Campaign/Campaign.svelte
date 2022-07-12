@@ -1,12 +1,13 @@
 <script>
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     import Card from '@smui/card';
-    import Form from "./Form.svelte";
+    import Select from "./Select.svelte";
     import Button from '@smui/button/src/Button.svelte';
     import Edit from "./Edit.svelte";
-    import { selectedCampaign } from "../../Store/Store"; 
-    
-    
+    import { selectedCampaign } from "../../Store/Store";
+    import CreateDialog from "./CreateDialog.svelte";
+
+    let open;
 
 </script>
 
@@ -20,14 +21,15 @@
 <div class="container">
     <center class="select">
         <Card>Select Campaign</Card>
-        <Form />
-        <Card>Selection: {#if $selectedCampaign} {$selectedCampaign} {:else} none {/if}</Card>
-        {#if $selectedCampaign} <Edit /> {/if}
+        <Select />
+        <Card>Selection: {#if $selectedCampaign} {$selectedCampaign.name} {:else} none {/if}</Card>
+        {#if $selectedCampaign} <Edit bind:campaignName={$selectedCampaign.name} bind:campaignId={$selectedCampaign.id}/> {/if}
     </center>
     <center class="new">
         <Card>Create new Campaign</Card>
-        <Button><div class="large">+</div></Button>
+        <Button on:click={() => open = true}><div class="large">+</div></Button>
     </center>
+    <CreateDialog bind:open={open}/>
 </div>
 
 

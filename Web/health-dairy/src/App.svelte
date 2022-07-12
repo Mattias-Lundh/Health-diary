@@ -4,12 +4,11 @@
 	import Login from "./Login/Login.svelte"
 	import Register from "./Login/Register.svelte";
 	import { Router, Link, Route } from "svelte-navigator";
-	
-	
-	
+	import Init from "./Init/Init.svelte"	
 	import {authToken}  from "./Store/Store";
-
-	console.log($authToken)
+	import Button from "@smui/button";
+	import GotoLogin from "./Login/GotoLogin.svelte";
+	
 </script>
 
 <main>
@@ -20,11 +19,10 @@
 			<Route path="/">
 				
 				{#if $authToken}
-				
-				<Nav appUserId={1} ></Nav>
+				<Init />		
+				<Nav />
 				{:else}
-			
-				<Link to="login">Login</Link>
+				<GotoLogin />
 				{/if}
 			</Route>
 			<Route path="login" component={Login} />

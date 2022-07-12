@@ -44,10 +44,10 @@ namespace Fitness.Controller
 
         [HttpPut]
         [Route("")]
-        public ExcersiseTemplateContract Update(ExcersiseTemplateContract excersiseTemplate)
+        public string Update(ExcersiseTemplateContract excersiseTemplate)
         {
             _data.ExcersiseTemplate.UpdateExcersiseTemplate(excersiseTemplate.ToExcersiseTemplate());
-            return excersiseTemplate;
+            return "success";
         }
 
         [HttpDelete]
@@ -55,7 +55,7 @@ namespace Fitness.Controller
         public string Delete(int id)
         {
             _data.ExcersiseTemplate.DeleteExcersiseTemplate(id);
-            return "Success";
+            return "success";
         }       
 
     }

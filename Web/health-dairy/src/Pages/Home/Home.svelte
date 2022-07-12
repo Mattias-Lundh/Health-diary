@@ -39,6 +39,7 @@
     <Excersises />
     
     {/if} 
+
 </center>
 
 

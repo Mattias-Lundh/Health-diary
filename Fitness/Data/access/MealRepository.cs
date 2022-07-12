@@ -33,7 +33,20 @@ namespace Fitness.Data.access
                         return m; 
                     }, 
                     parameters, 
-                    splitOn: "Id").ToList();
+                    splitOn: "Id")
+                    .GroupBy(e => e.Id)
+                    .Select(group =>
+                    {
+                        var meal = new Meal
+                        {
+                            Id = group.First().Id,
+                            Name = group.First().Name,                        
+                        };
+
+                        meal.FoodItems.AddRange(group.Select(m => m.FoodItems.First()));
+                        return meal;
+                    })
+                    .ToList();
             }
         }
 
@@ -69,7 +82,7 @@ namespace Fitness.Data.access
             var foodItems = meal.FoodItems.Select(ct => $"INSERT INTO mealConsumptionTemplate (MealId, ConsumptionTemplateId) VALUES (@MealId, {ct.Id}); ");
             
 
-            var queryString = $"DECLARE @MealId int; INSERT INTO meal (Name) OUTPUT Inserted.ID VALUES (@Name); SELECT @MealId = SCOPE_IDENTITY() {string.Concat(foodItems)}";
+            var queryString = $"DECLARE @MealId int; INSERT INTO meal (Name) OUTPUT Inserted.ID VALUES (@Name); SELECT @MealId = SCOPE_IDENTITY(); {string.Concat(foodItems)}";
             
             using (var con = new SqlConnection(_connectionString))
             {

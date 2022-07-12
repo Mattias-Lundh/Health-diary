@@ -19,21 +19,39 @@ namespace Fitness.Data.access
         public List<Excersise> GetExcersises(int campaignId)
         {
             var parameters = new { CampaignId = campaignId };
-            var queryString = "SELECT E.*, M.Id, M.enumCode, CA.Id FROM excersise E JOIN campaignExcersise CE ON CE.ExcersiseId = E.Id JOIN excersiseMuscle EM ON E.Id = Em.ExcersiseId JOIN muscle M ON M.Id = EM.MuscleId JOIN Campaign CA ON CA.Id = CE.CampaignId WHERE CE.Id = @CampaignId";
+            var queryString = "SELECT E.*, M.Id, M.enumCode, CA.Id FROM excersise E JOIN campaignExcersise CE ON CE.ExcersiseId = E.Id JOIN excersiseMuscle EM ON E.Id = Em.ExcersiseId JOIN muscle M ON M.Id = EM.MuscleId JOIN Campaign CA ON CA.Id = CE.CampaignId WHERE CE.CampaignId = @CampaignId";
             using (var con = new SqlConnection(_connectionString))
             {
                 con.Open();
 
                 return con.Query<Excersise, Muscle, Campaign, Excersise>(
-                    queryString, 
-                    (e, m, c) => 
+                    queryString,
+                    (e, m, c) =>
                     {
                         e.Muscles.Add(m);
                         e.Campaign = c.Id;
-                        return e; 
-                    }, 
-                    parameters, 
+                        return e;
+                    },
+                    parameters,
                     splitOn: "Id")
+                    .GroupBy(e => e.Id)
+                    .Select(group => 
+                    {
+                        var excersise = new Excersise
+                        {
+                            Id = group.First().Id,
+                            Name = group.First().Name,
+                            Duration = group.First().Duration,
+                            Weight = group.First().Weight,
+                            Reps = group.First().Reps,
+                            Sets = group.First().Sets,
+                            Day = group.First().Day,
+                            Campaign = group.First().Campaign
+                        };
+
+                        excersise.Muscles.AddRange(group.Select(e => e.Muscles.First()));
+                        return excersise;
+                    })
                     .ToList();
             }
         }

@@ -38,7 +38,12 @@ namespace Fitness.Controller
         [Route("")]
         public MealContract Create(MealContract meal)
         {
-            _data.Meal.InsertMeal(meal.ToMeal());
+            if(meal.FoodItems.Count == 0)
+            {
+                throw new Exception("meals must contain food items");
+            }
+
+            meal.Id = _data.Meal.InsertMeal(meal.ToMeal());
             return meal;
         }
 
@@ -46,9 +51,13 @@ namespace Fitness.Controller
         [Route("")]
         public string Update(MealContract meal)
         {
-            _data.Meal.UpdateMeal(meal.ToMeal());
+            if (meal.FoodItems.Count == 0)
+            {
+                throw new Exception("meals must contain food items");
+            }
 
-            return "Success";
+            _data.Meal.UpdateMeal(meal.ToMeal());
+            return "success";
         }
 
         [HttpDelete]
@@ -56,7 +65,7 @@ namespace Fitness.Controller
         public string Delete(int id)
         {
             _data.Meal.DeleteMeal(id);
-            return "Success";
+            return "success";
         }
     }
 }
